@@ -15,16 +15,16 @@ passport.use('register', new localStrategy({
     const institution = req.body.institution;
     const subject = req.body.subject;
     //Save the information provided by the user to the the database
-    const user = await UserModel.create({ name, email, password, institution, subject });
+    const user = await UserModel.create({ name, email, password, institution, subject});
     //Send the user information to the next middleware
     return done(null, user);
   } catch (error) {
-    error.msg = "";
-    if (error.code === 11000) {
-      error.msg = "Email already exists";
+    error.msg ="";
+    if(error.code === 11000){
+      error.msg ="Email already exists";
     }
     console.log(error.msg)
-    done(null, false, { email: error.msg });
+    done(null, false, {email:error.msg});
   }
 }));
 
@@ -40,7 +40,7 @@ passport.use('login', new localStrategy({
     }
     const validate = await user.isValidPassword(password);
     if (!validate) {
-      return done(null, false, { passwordincorrect: "Password incorrect" });
+      return done(null, false, { passwordincorrect: "Password incorrect"});
     }
     return done(null, user, { message: 'Logged in Successfully' });
   } catch (error) {

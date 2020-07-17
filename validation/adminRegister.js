@@ -8,9 +8,9 @@ module.exports = function validateRegisterInput(data) {
   data.password2 = !isEmpty(data.password2) ? data.password2 : "";// Name checks
   data.mobileNo = !isEmpty(data.mobileNo) ? data.mobileNo : "";
   data.organization = !isEmpty(data.organization) ? data.organization : "";
-  data.position = !isEmpty(data.position) ? data.position : "";
-  data.location = !isEmpty(data.location) ? data.location : "";
-  data.adminKey = !isEmpty(data.adminKey) ? data.adminKey : "";
+  data.position = !isEmpty(data.position ) ? data.position  : "";
+  data.location = !isEmpty(data.location) ? data.location: "";
+  data.adminKey = !isEmpty(data.adminKey) ? data.adminKey: "";
   if (Validator.isEmpty(data.name)) {
     errors.name = "Name field is required";
   }// Email checks

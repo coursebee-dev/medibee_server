@@ -9,7 +9,7 @@ module.exports = function validateRegisterInput(data) {
   data.mobileNo = !isEmpty(data.mobileNo) ? data.mobileNo : "";
   data.organization = !isEmpty(data.organization) ? data.organization : "";
   data.position = !isEmpty(data.position) ? data.position : "";
-  data.interests = !isEmpty(data.interests) ? data.interests : "";
+  data.interests = !isEmpty(data.interests) ? data.interests : [];
   if (Validator.isEmpty(data.name)) {
     errors.name = "Name field is required";
   }// Email checks

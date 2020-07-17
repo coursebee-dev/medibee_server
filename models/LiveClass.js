@@ -27,19 +27,18 @@ const LiveClass = new Schema({
         type: Boolean,
         default: false
     },
+    description: {
+        type: String,
+    },
     created: {
         type: Date,
         default: Date.now
     },
-    participants: [
-        {
-            studentId: {
-                type: String,
-                required: true,
-                unique: true
-            }
-        }
-    ]
+    price: {
+        type: Number,
+        default: 0
+    },
+    participants: []
 })
 
 module.exports = mongoose.model("LiveClass", LiveClass);
