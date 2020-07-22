@@ -21,15 +21,24 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  adminVerify: {
-    type: Boolean,
-    default: true
-  },
-  mobileNo: {
+  mentortype: {
     type: String,
     required: true
   },
-  organization: {
+  adminVerify: {
+    type: Boolean,
+    default: false
+  },
+  mobileNo: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  medicalcollege: {
+    type: String,
+    required: true
+  },
+  session: {
     type: String,
     required: true
   },
@@ -37,10 +46,9 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  interests: {
-    type: String,
-    required: false
-  },
+  subject_level: [],
+  subjects: [],
+  preferred_topic: [],
   date: {
     type: Date,
     default: Date.now

@@ -13,20 +13,25 @@ passport.use('registerMentor', new localStrategy({
     console.log("Mentor Registered: " + email);
     const name = req.body.name;
     const mobileNo = req.body.mobileNo
-    const organization = req.body.organization
     const position = req.body.position
     const interests = req.body.interests
+    const medicalcollege = req.body.medicalcollege
+    const session = req.body.session
+    const mentortype = req.body.mentortype
+    const preferred_topic = req.body.preferred_topic
+    const subject_level = req.body.subject_level
+    const subjects = req.body.subjects
     //Save the information provided by the user to the the database
-    const user = await UserModel.create({ name, email, password, mobileNo, organization, position, interests });
+    const user = await UserModel.create({ name, email, password, mobileNo, position, medicalcollege, session, mentortype, preferred_topic, subject_level, subjects, interests });
     //Send the user information to the next middleware
     return done(null, user);
   } catch (error) {
-    error.msg ="";
-    if(error.code === 11000){
-      error.msg ="Email already exists";
+    error.msg = "";
+    if (error.code === 11000) {
+      error.msg = "Email already exists";
     }
     console.log(error.msg)
-    done(null , false, {email:error.msg});
+    done(null, false, { email: error.msg });
   }
 }));
 
@@ -42,7 +47,7 @@ passport.use('loginMentor', new localStrategy({
     }
     const validate = await user.isValidPassword(password);
     if (!validate) {
-      return done(null, false, { passwordincorrect: "Password incorrect"});
+      return done(null, false, { passwordincorrect: "Password incorrect" });
     }
     return done(null, user, { message: 'Logged in Successfully' });
   } catch (error) {

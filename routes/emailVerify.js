@@ -55,7 +55,7 @@ router.get('/verify', async (req, res) => {
         res.redirect(req.headers.origin)
     } catch (error) {
         console.log("email is not verified");
-        res.end("<h1>Bad Request</h1>");
+        res.send("<h1>Bad Request</h1>");
     }
 });
 
@@ -110,7 +110,7 @@ router.get('/changepassverify', async (req, res) => {
         res.json({ message: "success" })
     } catch (error) {
         console.log(error);
-        res.end("<h1>Bad Request</h1>");
+        res.send("<h1>Bad Request</h1>");
     }
 });
 

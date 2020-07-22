@@ -9,6 +9,9 @@ module.exports = function validateRegisterInput(data) {
   data.mobileNo = !isEmpty(data.mobileNo) ? data.mobileNo : "";
   data.organization = !isEmpty(data.organization) ? data.organization : "";
   data.position = !isEmpty(data.position) ? data.position : "";
+  data.mentortype = !isEmpty(data.mentortype) ? data.mentortype : "";
+  data.medicalcollege = !isEmpty(data.medicalcollege) ? data.medicalcollege : "";
+  data.session = !isEmpty(data.session) ? data.session : "";
   data.interests = !isEmpty(data.interests) ? data.interests : [];
   if (Validator.isEmpty(data.name)) {
     errors.name = "Name field is required";
@@ -18,7 +21,8 @@ module.exports = function validateRegisterInput(data) {
   }
   else if (!Validator.isEmail(data.email)) {
     errors.email = "Email is invalid";
-  }// Password checks
+  }
+  // Password checks
   if (Validator.isEmpty(data.password)) {
     errors.password = "Password field is required";
   }
@@ -37,8 +41,14 @@ module.exports = function validateRegisterInput(data) {
   if (!/^[+]*[0-9]+$/.test(data.mobileNo)) {
     errors.mobileNo = "Mobile number is invalid";
   }
-  if (Validator.isEmpty(data.organization)) {
-    errors.organization = "Organization field is required";
+  if (Validator.isEmpty(data.mentortype)) {
+    errors.mentortype = "Mentor Type field is required";
+  }
+  if (Validator.isEmpty(data.session)) {
+    errors.session = "Session field is required";
+  }
+  if (Validator.isEmpty(data.medicalcollege)) {
+    errors.medicalcollege = "Medical College field is required";
   }
   if (Validator.isEmpty(data.position)) {
     errors.position = "Position field is required";

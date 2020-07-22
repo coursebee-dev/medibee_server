@@ -1,13 +1,15 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const router = express.Router();
 const validateRegisterInput = require("../validation/adminRegister");
 const validateLoginInput = require("../validation/login");// Load User model
 const StudentModel = require('../models/Student')
 const MentorModel = require("../models/Mentor")
 const LiveClassModel = require("../models/LiveClass")
+const SubjectModel = require("../models/Subject");
+const CategoryModel = require("../models/Category");
+
 
 router.post('/register', async (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -33,7 +35,7 @@ router.post('/login', async (req, res, next) => {
     const { errors, isValid } = validateLoginInput(req.body);// Check validation
     if (!isValid) {
         return next(errors);
-    } 
+    }
     passport.authenticate('loginAdmin', async (err, user, info) => {
         try {
             if (err || !user) {
@@ -65,47 +67,47 @@ router.get('/profile', passport.authenticate('jwtAdmin', { session: false }), (r
 });
 
 
-router.get('/allStudents',passport.authenticate('jwtAdmin', { session: false }), async (req,res,next) =>{
-    try{
-        const allStudents = await StudentModel.find({},'_id name email institution subject');
+router.get('/allStudents', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+    try {
+        const allStudents = await StudentModel.find({}, '_id name email institution subject');
         res.json(allStudents);
-    } catch(err) {
+    } catch (err) {
         return next(err)
-    } 
+    }
 });
 
-router.get('/allMentors',passport.authenticate('jwtAdmin', { session: false }), async (req,res,next) =>{
-    try{
-        const allMentors = await MentorModel.find({},'_id name email organization position mobileNo adminVerify');
+router.get('/allMentors', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+    try {
+        const allMentors = await MentorModel.find({}, '_id name email organization position mobileNo adminVerify');
         //console.log(allMentors)
         res.json(allMentors);
-    } catch(err) {
+    } catch (err) {
         //console.log(err)
         return next(err)
-    } 
+    }
 });
 
-router.get('/allMentors/:id',passport.authenticate('jwtAdmin', { session: false }), async (req,res,next) =>{
-    try{
+router.get('/allMentors/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+    try {
         const mentor = await MentorModel.findById(req.params.id);
         res.json(mentor);
-    } catch(err) {
+    } catch (err) {
         return next(err)
-    } 
+    }
 });
 
-router.put('/verifyMentor/:id',passport.authenticate('jwtAdmin', { session: false }), async (req,res,next) =>{
-    try{
-        const filter = { _id : req.params.id }
+router.put('/verifyMentor/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+    try {
+        const filter = { _id: req.params.id }
         const update = { adminVerify: true }
-        await MentorModel.updateOne( filter, update );
-        res.json({ message: "success"});
-    } catch(err) {
+        await MentorModel.updateOne(filter, update);
+        res.json({ message: "success" });
+    } catch (err) {
         return next(err)
-    } 
+    }
 });
 
-router.get('/allliveclass',passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+router.get('/allliveclass', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
     try {
         const liveClass = await LiveClassModel.find({})
         //console.log(liveClass)
@@ -121,10 +123,10 @@ router.get('/allliveclass',passport.authenticate('jwtAdmin', { session: false })
 
 router.put('/approvelive/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
     try {
-        const filter = { _id : req.params.id }
-        const update = { approved: true}
+        const filter = { _id: req.params.id }
+        const update = { approved: true }
         await LiveClassModel.updateOne(filter, update)
-        res.json({ message: "success"});
+        res.json({ message: "success" });
     }
     catch (err) {
         console.log(err)
@@ -132,6 +134,94 @@ router.put('/approvelive/:id', passport.authenticate('jwtAdmin', { session: fals
     }
 });
 
+router.get('/subject',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        const subject = await SubjectModel.find()
+        res.json(subject)
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
 
+router.post('/eachsubject',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        const subject = await SubjectModel.find({ category: { $in: req.body.name } })
+        res.json(subject)
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.post('/subject/add',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res) => {
+    try {
+        const subject = new SubjectModel(req.body);
+        await subject.save()
+        res.send({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+router.post('/subject/delete/:id',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        await SubjectModel.findOneAndDelete({ _id: req.params.id })
+        res.json({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.post('/subject/addSubcategory/:id',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        await SubjectModel.updateOne({ _id: req.params.id }, { $push: { subcategory: req.body } })
+        res.json({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.post('/subject/deleteSubcategory/:id/:catid',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        await SubjectModel.updateOne({ _id: req.params.id }, { $pull: { subcategory: { name: req.body.name } } })
+        res.json({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.get('/category',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        const category = await CategoryModel.find()
+        res.json(category)
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+
+router.post('/category/add',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        const category = new CategoryModel(req.body)
+        category.save()
+        res.json({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
+router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        await CategoryModel.findOneAndDelete({ _id: req.params.id })
+        res.json({ message: 'success' })
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
 
 module.exports = router;
