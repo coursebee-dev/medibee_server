@@ -46,6 +46,7 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  imagedata: {},
   subject_level: [],
   subjects: [],
   preferred_topic: [],

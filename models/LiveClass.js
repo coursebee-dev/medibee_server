@@ -27,12 +27,23 @@ const LiveClass = new Schema({
         type: Boolean,
         default: false
     },
+    academicExcellence: {
+        type: String,
+        required: true,
+    },
+    selectedliveclasslevel: [],
+    selectedsubject: [],
+    selectedsubcategories: [],
     description: {
         type: String,
     },
     created: {
         type: Date,
         default: Date.now
+    },
+    fake_price: {
+        type: Number,
+        default: 0
     },
     price: {
         type: Number,

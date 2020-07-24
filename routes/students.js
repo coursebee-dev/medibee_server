@@ -9,6 +9,8 @@ let sslsettings = {
     store_passwd: "kerne5eecca7eecc59@ssl"
 }
 
+const MentorModel = require("../models/Mentor")
+
 const router = express.Router();
 const validateRegisterInput = require("../validation/studentRegister");
 const validateLoginInput = require("../validation/login");// Load User model
@@ -81,6 +83,26 @@ router.get('/approvedliveclass', async (req, res, next) => {
         return next(err);
     }
 });
+
+router.get('/mentors', async (req, res, next) => {
+    try {
+        const mentors = await MentorModel.find()
+        res.send(mentors)
+    } catch (error) {
+        console.log(err)
+        return next(err);
+    }
+})
+
+router.get('/mentors/:id', async (req, res, next) => {
+    try {
+        const mentors = await MentorModel.findOne({ _id: req.params.id })
+        res.send(mentors)
+    } catch (error) {
+        console.log(err)
+        return next(err);
+    }
+})
 
 router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     try {
