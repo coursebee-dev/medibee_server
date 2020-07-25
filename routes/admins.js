@@ -144,6 +144,16 @@ router.get('/subject',/*passport.authenticate('jwtAdmin',{session: false}),*/ as
     }
 })
 
+router.post("/setprice/:id", async (req, res) => {
+    try {
+        const liveclass = await LiveClassModel.updateOne({ _id: req.params.id }, { $set: { price: req.body.price, fake_price: req.body.fake_price } })
+        liveclass.save()
+        res.send({ message: "success" })
+    } catch (error) {
+        res.send(error)
+    }
+})
+
 router.post('/eachsubject',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
     try {
         const subject = await SubjectModel.find({ category: { $in: req.body.name } })

@@ -16,6 +16,7 @@ const validateRegisterInput = require("../validation/studentRegister");
 const validateLoginInput = require("../validation/login");// Load User model
 const LiveClassModel = require("../models/LiveClass")
 const StudentModel = require('../models/Student');
+const { find } = require('../models/Mentor');
 
 router.post('/register', async (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -101,6 +102,24 @@ router.get('/mentors/:id', async (req, res, next) => {
     } catch (error) {
         console.log(err)
         return next(err);
+    }
+})
+
+router.post("/mentor/filter", async (req, res, next) => {
+    try {
+        if (req.body.target === "category") {
+            const mentors = await MentorModel.find({ subject_level: req.body.value })
+            res.send(mentors)
+        } else if (req.body.target === "subcategory") {
+            const mentors = await MentorModel.find({ "subjects.subcategory": { $eq: req.body.value } })
+            res.send(mentors)
+        } else if (req.body.target === "subject") {
+            const mentors = await MentorModel.find({ "subjects.subject": { $eq: req.body.value } })
+            res.send(mentors)
+        }
+    }
+    catch (error) {
+        console.log(error)
     }
 })
 
