@@ -46,10 +46,18 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  imagedata: {},
-  subject_level: [],
-  subjects: [],
-  preferred_topic: [],
+  sponsored: {
+    type: Boolean,
+    default: false
+  },
+  subject: [],
+  category: [],
+  subcategory: [],
+  propicurl: { type: String },
+  mbbsuel: [],
+  idurl: [],
+  nidurl: [],
+  bmdcurl: [],
   date: {
     type: Date,
     default: Date.now

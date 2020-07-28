@@ -14,15 +14,24 @@ passport.use('registerMentor', new localStrategy({
     const name = req.body.name;
     const mobileNo = req.body.mobileNo
     const position = req.body.position
-    const interests = req.body.interests
     const medicalcollege = req.body.medicalcollege
     const session = req.body.session
     const mentortype = req.body.mentortype
-    const preferred_topic = req.body.preferred_topic
-    const subject_level = req.body.subject_level
-    const subjects = req.body.subjects
+    const subject = req.body.subject
+    const category = req.body.category
+    const subcategory = req.body.subcategory
+    const propicurl = req.body.propicurl
+    let mbbsurl, idurl, bmdcurl, nidurl, user;
+    nidurl = req.body.nidurl;
+    if (req.body.mentortype === "Student") {
+      idurl = req.body.idurl;
+      user = await UserModel.create({ name, email, password, mobileNo, position, medicalcollege, session, mentortype, subject, category, subcategory, propicurl, idurl, nidurl });
+    } else if (req.body.mentortype === "Professional") {
+      mbbsurl = req.body.mbbsurl
+      bmdcurl = req.body.bmdcurl
+      user = await UserModel.create({ name, email, password, mobileNo, position, medicalcollege, session, mentortype, subject, category, subcategory, propicurl, mbbsurl, bmdcurl, nidurl });
+    }
     //Save the information provided by the user to the the database
-    const user = await UserModel.create({ name, email, password, mobileNo, position, medicalcollege, session, mentortype, preferred_topic, subject_level, subjects, interests });
     //Send the user information to the next middleware
     return done(null, user);
   } catch (error) {

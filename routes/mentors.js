@@ -1,22 +1,16 @@
 const express = require('express');
 const passport = require('passport');
-const axios = require('axios')
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const validateRegisterInput = require("../validation/mentorRegister");
 const validateLoginInput = require("../validation/login");
 const MentorModel = require("../models/Mentor")
 const LiveClassModel = require("../models/LiveClass")
-const cloudinary = require('cloudinary');
-cloudinary.config({
-    cloud_name: 'coursebee',
-    api_key: '162342449889694',
-    api_secret: 'I_EQRCJcBVMes0Ueb0LVvTjb1Xk'
-});
 
 router.post('/register', async (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);
     // Check validation
+    console.log("frodo")
     console.log(req.body)
     if (!isValid) {
         return next(errors);

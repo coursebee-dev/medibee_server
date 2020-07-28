@@ -7,12 +7,10 @@ module.exports = function validateRegisterInput(data) {
   data.password = !isEmpty(data.password) ? data.password : "";
   data.password2 = !isEmpty(data.password2) ? data.password2 : "";// Name checks
   data.mobileNo = !isEmpty(data.mobileNo) ? data.mobileNo : "";
-  data.organization = !isEmpty(data.organization) ? data.organization : "";
   data.position = !isEmpty(data.position) ? data.position : "";
   data.mentortype = !isEmpty(data.mentortype) ? data.mentortype : "";
   data.medicalcollege = !isEmpty(data.medicalcollege) ? data.medicalcollege : "";
   data.session = !isEmpty(data.session) ? data.session : "";
-  data.interests = !isEmpty(data.interests) ? data.interests : [];
   if (Validator.isEmpty(data.name)) {
     errors.name = "Name field is required";
   }// Email checks

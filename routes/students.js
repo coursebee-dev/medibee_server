@@ -141,9 +141,9 @@ router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt
             post_body['total_amount'] = targetLiveClass.price;
             post_body['currency'] = "BDT";
             post_body['tran_id'] = `${req.params.studentid + req.params.classid + Date.now()}`;
-            post_body['success_url'] = "https://www.coursebee.com/success";
-            post_body['fail_url'] = "https://www.coursebee.com/failed";
-            post_body['cancel_url'] = "https://www.coursebee.com/cancel";
+            post_body['success_url'] = "https://www.medibee.com.bd/success";
+            post_body['fail_url'] = "https://www.medibee.com.bd/failed";
+            post_body['cancel_url'] = "https://www.medibee.com.bd/cancel";
             post_body['emi_option'] = 0;
             post_body['cus_add1'] = "n/a";
             post_body['cus_name'] = `${targetStudent.name}`;
