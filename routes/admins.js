@@ -121,11 +121,12 @@ router.get('/allliveclass', passport.authenticate('jwtAdmin', { session: false }
 
 
 
-router.put('/approvelive/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
+router.post('/approvelive/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
     try {
-        const filter = { _id: req.params.id }
-        const update = { approved: true }
-        await LiveClassModel.updateOne(filter, update)
+        console.log("hu")
+        const aproveclass = await LiveClassModel.findOne({ _id: req.params.id })
+        aproveclass.approved = true;
+        await aproveclass.save()
         res.json({ message: "success" });
     }
     catch (err) {
@@ -146,7 +147,7 @@ router.get('/subject',/*passport.authenticate('jwtAdmin',{session: false}),*/ as
 
 router.post("/setprice/:id", async (req, res) => {
     try {
-        const liveclass = await LiveClassModel.updateOne({ _id: req.params.id }, { $set: { price: req.body.price, fake_price: req.body.fake_price } })
+        const liveclass = await LiveClassModel.findOneAndUpdate({ _id: req.params.id }, { $set: { price: req.body.price, fake_price: req.body.fake_price } })
         liveclass.save()
         res.send({ message: "success" })
     } catch (error) {
