@@ -94,12 +94,14 @@ router.get('/liveclass/:id', passport.authenticate('jwtMentor', { session: false
 router.get('/mentorinfo/:id', async (req, res) => {
     try {
         const mentor = await MentorModel.findOne({ _id: req.params.id })
-        console.log(mentor)
-        res.json({
+        const packmentor = {
+            id: mentor._id,
             name: mentor.name,
-            organization: mentor.organization,
-            position: mentor.position
-        })
+            medicalcollege: mentor.medicalcollege,
+            position: mentor.position,
+            propic: mentor.propicurl
+        }
+        res.json(packmentor)
     } catch (error) {
         res.json(error)
     }
