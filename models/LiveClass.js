@@ -29,7 +29,6 @@ const LiveClass = new Schema({
     },
     academicExcellence: {
         type: String,
-        required: true,
     },
     selectedliveclasslevel: [],
     selectedsubject: [],
