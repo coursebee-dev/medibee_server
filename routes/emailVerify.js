@@ -44,13 +44,15 @@ router.get('/verify', async (req, res) => {
         const decoded = jwt.verify(req.query.token, process.env.EMAIL_SECRET)
         if (decoded.type === "student") {
             await Student.findOneAndUpdate({ email: decoded.email }, { emailVerify: true })
-            res.redirect(req.headers.origin + "/login")
+            res.send(`<p>Successfully registered!</p><a href="https://www.medibee.com.bd/login">Login</a>`)
         } else if (decoded.type === "mentor") {
             await Mentor.findOneAndUpdate({ email: decoded.email }, { emailVerify: true })
-            res.redirect(req.headers.origin + "/mentor/login")
+            //res.redirect(req.headers.origin + "/mentor/login")
+            res.send(`<p>Successfully registered!</p><a href="https://www.medibee.com.bd/mentor/login">Login</a>`)
         } else if (decoded.type === "admin") {
             await Admin.findOneAndUpdate({ email: decoded.email }, { emailVerify: true })
-            res.redirect(req.headers.origin + "/admin/login")
+            //res.redirect(req.headers.origin + "/admin/login")
+            res.send(`<p>Successfully registered!</p><a href="https://www.medibee.com.bd/admin/login">Login</a>`)
         }
         res.redirect(req.headers.origin)
     } catch (error) {
