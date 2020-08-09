@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const router = express.Router();
 const validateRegisterInput = require("../validation/adminRegister");
 const validateLoginInput = require("../validation/login");// Load User model
@@ -9,6 +10,7 @@ const MentorModel = require("../models/Mentor")
 const LiveClassModel = require("../models/LiveClass")
 const SubjectModel = require("../models/Subject");
 const CategoryModel = require("../models/Category");
+const { application } = require('express');
 
 
 router.post('/register', async (req, res, next) => {
@@ -123,15 +125,49 @@ router.get('/allliveclass', passport.authenticate('jwtAdmin', { session: false }
 
 router.post('/approvelive/:id', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
     try {
-        console.log("hu")
         const aproveclass = await LiveClassModel.findOne({ _id: req.params.id })
+        console.log(aproveclass)
+        const sclass = {
+            "topic": aproveclass.topic,
+            "start_time": aproveclass.start_time,
+            "duration": aproveclass.duration,
+            "timezone": "Asia/Dhaka",
+            "settings": {
+                "host_video": true,
+                "participant_video": false,
+                "join_before_host": false,
+                "mute_upon_entry": true,
+                "watermark": true,
+                "approval_type": 0,
+                "auto_recording": "cloud",
+                "close_registration": true,
+                "waiting_room": true,
+                "registrants_email_notification": true,
+            }
+        }
+
+        //const ZOOMAPIKEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6InJPZzQ0ZDdKUlR1TnNmbjVwV1AtSEEiLCJleHAiOjE4OTMzOTExNDAsImlhdCI6MTU5NjkxNjc0MH0.SZkOikIs7M5Q7lcQ_MHCWaQKGaeoz5xy-wjO58S9wK0";
+        const { data } = await axios({
+            method: 'post',
+            url: 'https://api.zoom.us/v2/users/russ.iut03@gmail.com/meetings',
+            data: sclass,
+            headers: {
+                "content-type": "application/json",
+                "Authorization": `Bearer ${process.env.ZOOMAPIKEY}`
+            }
+        })
         aproveclass.approved = true;
+        aproveclass.zoomID = data.id;
+        aproveclass.zoomJoinLink = data.join_url;
+        aproveclass.zoomStartLink = data.start_url;
+        aproveclass.zoomPassword = data.password;
         await aproveclass.save()
+        console.log(data)
         res.json({ message: "success" });
     }
     catch (err) {
         console.log(err)
-        return next(err);
+        //return next(err);
     }
 });
 

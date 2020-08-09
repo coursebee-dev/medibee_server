@@ -125,13 +125,17 @@ router.post("/mentor/filter", async (req, res, next) => {
 
 router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     try {
-        const participants = {
-            studentId: req.params.studentid
-        }
 
         const targetLiveClass = await LiveClassModel.findOne({ _id: req.params.classid })
 
         const targetStudent = await StudentModel.findOne({ _id: req.params.studentid })
+
+        const participants = {
+            studentId: req.params.studentid,
+            zoomRegID: "",
+            joinURL: "",
+            password: targetLiveClass.zoomPassword
+        }
 
         if (await LiveClassModel.findOne({ _id: req.params.classid, "participants.studentId": req.params.studentid })) {
             res.json({ message: 'Already registered', success: true })
@@ -165,6 +169,22 @@ router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt
                 res.json({ status: 'fail', data: null, logo: transaction.storeLogo, message: "JSON Data parsing error!" })
             }
         } else {
+            const { data } = await axios({
+                method: 'post',
+                url: `https://api.zoom.us/v2/meetings/${targetLiveClass.zoomID}/registrants`,
+                data: {
+                    email: targetStudent.email,
+                    first_name: targetStudent.name
+                },
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `Bearer ${process.env.ZOOMAPIKEY}`
+                }
+            })
+            participants.zoomRegID = data.registrant_id;
+            participants.joinURL = data.join_url;
+
+            console.log(participants)
             await LiveClassModel.updateOne({ _id: req.params.classid }, { $push: { participants: participants } })
             res.json({ message: 'Successfully registered', success: true })
         }
@@ -195,11 +215,13 @@ router.get('/liveclassdetails/:id', async (req, res) => {
 
 router.get('/joinliveclass/:studentid/:classid', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     try {
-
         const found = await LiveClassModel.findOne({ _id: req.params.classid, "participants.studentId": req.params.studentid })
+        let targetparticipant = found?.participants?.find(item => {
+            return item.studentId === req.params.studentid;
+        })
         if (!found) res.json({ message: "Not Authorized", success: false })
-        else if (new Date(found.start_time) > new Date()) res.json({ message: "Please Wait Until Scheduled Time", success: false })
-        else res.json({ message: 'Authization Complete', success: true })
+        else if (new Date(found.start_time) > new Date()) res.json({ message: "Please Wait Until Scheduled Time", success: false, joinurl: targetparticipant.joinURL })
+        else res.json({ message: 'Authization Complete', success: true, joinurl: targetparticipant.joinURL })
     }
     catch (err) {
         next(err)

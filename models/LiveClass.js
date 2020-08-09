@@ -7,6 +7,22 @@ const LiveClass = new Schema({
         type: String,
         required: true
     },
+    zoomID: {
+        type: String,
+        default: "untitled"
+    },
+    zoomJoinLink: {
+        type: String,
+        default: "untitled"
+    },
+    zoomStartLink: {
+        type: String,
+        default: "untitled"
+    },
+    zoomPassword: {
+        type: String,
+        default: "untitled"
+    },
     topic: {
         type: String,
         required: true
