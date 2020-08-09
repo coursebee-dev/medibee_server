@@ -218,7 +218,7 @@ router.get('/joinliveclass/:studentid/:classid', passport.authenticate('jwt', { 
         const found = await LiveClassModel.findOne({ _id: req.params.classid, "participants.studentId": req.params.studentid })
         let targetparticipant;
         if (!found) res.json({ message: "Not Authorized", success: false })
-        else if (new Date(found.start_time) > new Date()) res.json({ message: "Please Wait Until Scheduled Time", success: false, joinurl: targetparticipant.joinURL })
+        else if (new Date(found.start_time) > new Date()) res.json({ message: "Please Wait Until Scheduled Time", success: false })
         else {
             targetparticipant = found.participants.find(item => {
                 return item.studentId === req.params.studentid;
