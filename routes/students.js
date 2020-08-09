@@ -220,7 +220,7 @@ router.get('/joinliveclass/:studentid/:classid', passport.authenticate('jwt', { 
         if (!found) res.json({ message: "Not Authorized", success: false })
         else if (new Date(found.start_time) > new Date()) res.json({ message: "Please Wait Until Scheduled Time", success: false, joinurl: targetparticipant.joinURL })
         else {
-            found.participants.find(item => {
+            targetparticipant = found.participants.find(item => {
                 return item.studentId === req.params.studentid;
             })
             res.json({ message: 'Authization Complete', success: true, joinurl: targetparticipant.joinURL })
