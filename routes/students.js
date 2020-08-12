@@ -5,8 +5,8 @@ const axios = require('axios')
 const SSLCommerz = require('sslcommerz-nodejs');
 let sslsettings = {
     isSandboxMode: true, //false if live version
-    store_id: "kerne5eecca7eecc59",
-    store_passwd: "kerne5eecca7eecc59@ssl"
+    store_id: "medibeecombdlive",
+    store_passwd: "5F2F7E3B9686244306"
 }
 
 const MentorModel = require("../models/Mentor")
