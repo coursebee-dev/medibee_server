@@ -4,9 +4,16 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios')
 const SSLCommerz = require('sslcommerz-nodejs');
 let sslsettings = {
-    isSandboxMode: true, //false if live version
+
+    //live credentials
+    isSandboxMode: false, //false if live version
     store_id: "medibeecombdlive",
     store_passwd: "5F2F7E3B9686244306"
+
+    // sandbox credentials
+    // isSandboxMode: true, //false if live version
+    // store_id: "kerne5eecca7eecc59",
+    // store_passwd: "kerne5eecca7eecc59@ssl"
 }
 
 const MentorModel = require("../models/Mentor")
@@ -16,7 +23,6 @@ const validateRegisterInput = require("../validation/studentRegister");
 const validateLoginInput = require("../validation/login");// Load User model
 const LiveClassModel = require("../models/LiveClass")
 const StudentModel = require('../models/Student');
-const { find } = require('../models/Mentor');
 
 router.post('/register', async (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -166,6 +172,7 @@ router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt
             if (transaction.GatewayPageURL && transaction.GatewayPageURL !== "") {
                 res.json({ status: 'success', data: transaction.GatewayPageURL, logo: transaction.storeLogo })
             } else {
+                console.log(transaction)
                 res.json({ status: 'fail', data: null, logo: transaction.storeLogo, message: "JSON Data parsing error!" })
             }
         } else {
