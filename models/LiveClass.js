@@ -48,7 +48,6 @@ const LiveClass = new Schema({
     },
     selectedliveclasslevel: [],
     selectedsubject: [],
-    selectedsubcategories: [],
     description: {
         type: String,
     },
