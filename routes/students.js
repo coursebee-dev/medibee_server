@@ -7,14 +7,14 @@ let sslsettings = {
     isSandboxMode: true, //false if live version
     store_id: "kerne5eecca7eecc59",
     store_passwd: "kerne5eecca7eecc59@ssl"
-}
+};
 
-const MentorModel = require("../models/Mentor")
+const MentorModel = require("../models/Mentor");
 
 const router = express.Router();
 const validateRegisterInput = require("../validation/studentRegister");
 const validateLoginInput = require("../validation/login");// Load User model
-const LiveClassModel = require("../models/LiveClass")
+const LiveClassModel = require("../models/LiveClass");
 const StudentModel = require('../models/Student');
 const { find } = require('../models/Mentor');
 
@@ -126,16 +126,16 @@ router.post("/mentor/filter", async (req, res, next) => {
 router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     try {
 
-        const targetLiveClass = await LiveClassModel.findOne({ _id: req.params.classid })
+        const targetLiveClass = await LiveClassModel.findOne({ _id: req.params.classid });
 
-        const targetStudent = await StudentModel.findOne({ _id: req.params.studentid })
+        const targetStudent = await StudentModel.findOne({ _id: req.params.studentid });
 
         const participants = {
             studentId: req.params.studentid,
             zoomRegID: "",
             joinURL: "",
             password: targetLiveClass.zoomPassword
-        }
+        };
 
         if (await LiveClassModel.findOne({ _id: req.params.classid, "participants.studentId": req.params.studentid })) {
             res.json({ message: 'Already registered', success: true })
@@ -162,7 +162,7 @@ router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt
             post_body['product_profile'] = "non-physical-goods";
             post_body['value_a'] = req.params.studentid;
             post_body['value_b'] = req.params.classid;
-            const transaction = await sslcommerz.init_transaction(post_body)
+            const transaction = await sslcommerz.init_transaction(post_body);
             if (transaction.GatewayPageURL && transaction.GatewayPageURL !== "") {
                 res.json({ status: 'success', data: transaction.GatewayPageURL, logo: transaction.storeLogo })
             } else {
@@ -184,7 +184,7 @@ router.post('/registerliveclass/:studentid/:classid', passport.authenticate('jwt
             participants.zoomRegID = data.registrant_id;
             participants.joinURL = data.join_url;
 
-            console.log(participants)
+            console.log(participants);
             await LiveClassModel.updateOne({ _id: req.params.classid }, { $push: { participants: participants } })
             res.json({ message: 'Successfully registered', success: true })
         }

@@ -18,6 +18,6 @@ const SubjectSchema = new Schema({
         required: true
     },
     subcategory: []
-})
+});
 
 module.exports = mongoose.model("Subject", SubjectSchema);
