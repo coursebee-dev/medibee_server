@@ -68,7 +68,6 @@ router.get('/profile', passport.authenticate('jwtAdmin', { session: false }), (r
     })
 });
 
-
 router.get('/allStudents', passport.authenticate('jwtAdmin', { session: false }), async (req, res, next) => {
     try {
         const allStudents = await StudentModel.find({}, '_id name email institution subject');
