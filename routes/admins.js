@@ -271,4 +271,17 @@ router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: 
     }
 })
 
+router.post('/liveclass/updateschedule/:classid/:id', async (req, res) => {
+    try {
+        const liveclass = await LiveClassModel.findOne({ _id: req.params.classid })
+        console.log(req.body)
+        liveclass.classtimes[req.params.id] = req.body;
+        liveclass.save();
+        console.log(liveclass.classtimes[req.params.id])
+        res.json({ message: 'Successfully updated' })
+    } catch (error) {
+        res.send(error)
+    }
+})
+
 module.exports = router;
