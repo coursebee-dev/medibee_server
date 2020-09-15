@@ -31,14 +31,7 @@ const LiveClass = new Schema({
         type: String,
         required: true
     },
-    start_time: {
-        type: Date,
-        required: true
-    },
-    duration: {
-        type: Number,
-        required: true
-    },
+    classtimes: [],
     approved: {
         type: Boolean,
         default: false
