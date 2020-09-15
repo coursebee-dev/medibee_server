@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const validateRegisterInput = require("../validation/mentorRegister");
 const validateLoginInput = require("../validation/login");
-const MentorModel = require("../models/Mentor")
-const LiveClassModel = require("../models/LiveClass")
+const MentorModel = require("../models/Mentor");
+const LiveClassModel = require("../models/LiveClass");
 
 router.post('/register', async (req, res, next) => {
     const { errors, isValid } = validateRegisterInput(req.body);

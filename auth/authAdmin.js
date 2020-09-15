@@ -14,8 +14,8 @@ passport.use('registerAdmin', new localStrategy({
     const name = req.body.name
     const mobileNo = req.body.mobileNo
     const organization = req.body.organization
-    const position = req.body.position
-    const location = req.body.location
+    const position = req.body.position;
+    const location = req.body.location;
     //Save the information provided by the user to the the database
     const user = await UserModel.create({ name, email, password, mobileNo, organization, position, location });
     //Send the user information to the next middleware
@@ -61,7 +61,7 @@ passport.use('jwtAdmin', new JWTstrategy({
   jwtFromRequest: ExtractJWT.fromHeader('authorization')
 }, async (token, done) => {
   try {
-    console.log(token)
+    console.log(token);
     //Pass the user details to the next middleware
     return done(null, token);
   } catch (error) {

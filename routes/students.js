@@ -4,12 +4,6 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios')
 const SSLCommerz = require('sslcommerz-nodejs');
 let sslsettings = {
-<<<<<<< HEAD
-    isSandboxMode: true, //false if live version
-    store_id: "kerne5eecca7eecc59",
-    store_passwd: "kerne5eecca7eecc59@ssl"
-};
-=======
 
     //live credentials
     isSandboxMode: false, //false if live version
@@ -21,7 +15,6 @@ let sslsettings = {
     // store_id: "kerne5eecca7eecc59",
     // store_passwd: "kerne5eecca7eecc59@ssl"
 }
->>>>>>> 4270de8afff73e43080069d9060581b3d5b4c2dc
 
 const MentorModel = require("../models/Mentor");
 

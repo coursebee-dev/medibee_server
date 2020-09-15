@@ -5,11 +5,13 @@ const axios = require('axios');
 const router = express.Router();
 const validateRegisterInput = require("../validation/adminRegister");
 const validateLoginInput = require("../validation/login");// Load User model
-const StudentModel = require('../models/Student')
-const MentorModel = require("../models/Mentor")
-const LiveClassModel = require("../models/LiveClass")
+const StudentModel = require('../models/Student');
+const MentorModel = require("../models/Mentor");
+const LiveClassModel = require("../models/LiveClass");
 const SubjectModel = require("../models/Subject");
 const CategoryModel = require("../models/Category");
+const QuesCategory = require("../models/QuesCategory");
+const QuesBank = require('../models/QuesBank');
 const { application } = require('express');
 
 
@@ -209,7 +211,7 @@ router.post('/subject/add',/*passport.authenticate('jwtAdmin',{session: false}),
         console.log(err)
         res.send(err)
     }
-})
+});
 router.post('/subject/delete/:id',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
     try {
         await SubjectModel.findOneAndDelete({ _id: req.params.id })
@@ -268,6 +270,45 @@ router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: 
         console.log(err)
         res.send(err)
     }
-})
+});
+
+// question bank
+router.get('/questionBank/category',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
+    try {
+        const category = await QuesCategory.find()
+        res.json(category);
+    } catch(err) {
+        res.send(err)
+    }
+});
+
+router.post('/questionBank/category/add', async(req,res,next) => {
+    try {
+        const quesCategory = await new QuesCategory(req.body);
+        quesCategory.save();
+        res.json({message: 'success'});
+    } catch(err) {
+        res.send(err)
+    }
+});
+
+router.post('/questionBank/question/add',async (req,res,next) => {
+    try {
+        const question = await new QuesBank(req.body);
+        question.save();
+        res.json({message: 'success'});
+    } catch(err) {
+        res.send(err)
+    }
+});
+
+router.get('/questionBank/question',async (req,res,next) => {
+    try {
+        const questions = await QuesBank.findOne()
+        res.json(questions);
+    } catch(err) {
+        res.send(err)
+    }
+});
 
 module.exports = router;
