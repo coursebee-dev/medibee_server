@@ -275,7 +275,7 @@ router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: 
 // question bank
 router.get('/questionBank/category',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
     try {
-        const category = await QuesCategory.find()
+        const category = await QuesCategory.find().populate('questions')
         res.json(category);
     } catch(err) {
         res.send(err)
@@ -294,8 +294,16 @@ router.post('/questionBank/category/add', async(req,res,next) => {
 
 router.post('/questionBank/question/add',async (req,res,next) => {
     try {
+        console.log(req.body.questionCategory);
         const question = await new QuesBank(req.body);
         question.save();
+
+        const categoryUpdate = await QuesCategory.findByIdAndUpdate(
+            question.questionCategory._id,
+            {$push : {questions : question._id} },
+            { new: false, useFindAndModify: true }
+        )
+        console.log(categoryUpdate)
         res.json({message: 'success'});
     } catch(err) {
         res.send(err)
@@ -304,7 +312,7 @@ router.post('/questionBank/question/add',async (req,res,next) => {
 
 router.get('/questionBank/question',async (req,res,next) => {
     try {
-        const questions = await QuesBank.findOne()
+        const questions = await QuesBank.findOne().populate('questionCategory')
         res.json(questions);
     } catch(err) {
         res.send(err)

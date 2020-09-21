@@ -31,10 +31,8 @@ const QuesBank = new Schema({
         type: String,
         required: true
     },
-    questionCatgegory: {
-        type: String,
-        required: true
-    }
+    questionCategory: { type: Schema.Types.ObjectId, ref: 'QuesCatg'},
+    catg: { type: Schema.Types.ObjectId, ref: 'QuesCatg' }
 })
 
 module.exports = mongoose.model('QuesBank',QuesBank)
