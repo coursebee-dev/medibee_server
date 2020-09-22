@@ -319,6 +319,15 @@ router.get('/questionBank/question',async (req,res,next) => {
     }
 });
 
+router.get('/questionBank/question/:subjectId',async (req,res,next) => {
+    try {
+        const questions = await QuesCategory.findById(req.params.subjectId).populate('questions')
+        res.json(questions.questions);
+    } catch(err) {
+        res.send(err)
+    }
+});
+
 router.post('/liveclass/updateschedule/:classid/:id', async (req, res) => {
     try {
         const liveclass = await LiveClassModel.findOne({ _id: req.params.classid })
