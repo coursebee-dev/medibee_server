@@ -32,7 +32,16 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  meetings:[]
+  meetings:[],
+  question_bank:[{
+    subject: {type: String},
+    subject_id: {type: String},
+    questions: [{
+      question_id : {type: String},
+      answer : {type: Number},
+    }]
+  }]
+
 });
 
 
