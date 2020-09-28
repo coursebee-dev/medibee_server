@@ -323,11 +323,21 @@ router.get('/questionBank/question/:subjectId/:studentId',async (req,res,next) =
     try {
         const questions = await QuesCategory.findById(req.params.subjectId).populate('questions')
         const allQues = questions.questions;
-        const student = await StudentModel.findById(req.params.studentId)
-        const answered = student.question_bank
-        console.log("Student Id",student)
-        console.log("question catg",questions.questions)
-        res.json(questions.questions);
+        const answered = await StudentModel.findOne({_id: req.params.studentId}).select( { question_bank: {$elemMatch: {subject_id: req.params.subjectId }}} )
+
+        console.log("answeredddd",answered.question_bank)
+        if (answered.question_bank.length > 0){
+            const answeredQues = answered.question_bank[0].questions;
+
+            var unAnsweredQuestion = allQues.filter(function(obj) {
+                return !answeredQues.some(function(obj2) {
+                    return obj._id == obj2.question_id;
+                });
+            });
+            res.json(unAnsweredQuestion);
+        }else{
+            res.json(questions.questions);
+        }
     } catch(err) {
         res.send(err)
     }
@@ -365,7 +375,6 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
                 },
                 { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
             );
-            console.log("1",asd)
         }else{
             const asd = await StudentModel.findOneAndUpdate(
                 req.params.studentId,
@@ -380,7 +389,6 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
                             }
                     } }
             )
-            console.log("2",asd)
         }
 
 

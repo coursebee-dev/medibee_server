@@ -238,6 +238,16 @@ router.get('/joinliveclass/:studentid/:classid', passport.authenticate('jwt', { 
     }
 });
 
+router.get('/questionBank/:studentId',async(req,res) => {
+    try{
+        const student = await StudentModel.findById(req.params.studentId)
+        res.json(student.question_bank)
+    }
+    catch(error) {
+        console.log(error)
+    }
+})
+
 router.post('/ipn_listener', async (req, res) => {
     try {
         let sslcommerz = new SSLCommerz(sslsettings);
