@@ -319,49 +319,71 @@ router.get('/questionBank/question',async (req,res,next) => {
     }
 });
 
-router.get('/questionBank/question/:subjectId',async (req,res,next) => {
+router.get('/questionBank/question/:subjectId/:studentId',async (req,res,next) => {
     try {
         const questions = await QuesCategory.findById(req.params.subjectId).populate('questions')
+        const allQues = questions.questions;
+        const student = await StudentModel.findById(req.params.studentId)
+        const answered = student.question_bank
+        console.log("Student Id",student)
+        console.log("question catg",questions.questions)
         res.json(questions.questions);
     } catch(err) {
         res.send(err)
     }
 });
 
-router.route('/sensors_update/:_id/:sensor_name/')
-    .post(function (req, res) {
-        User.findOneAndUpdate(
-            {_id:req.body._id},
-            {$push: {
-                            "sensors" : {"sensor_name" : req.body.sensor_name , "measurements.0.time": req.body.time }
-                         }
-                },
-            {new:true},function(err, newSensor) {
-                if (err)
-                    res.send(err);
-                res.send(newSensor)
-            });
-    });
-
 router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(req,res,next) => {
     try{
-        console.log(req.params.subjectId);
-        console.log(req.params.questionId);
-        console.log(req.params.selectedAns);
-        console.log(req.params.studentId);
-        const asd = await StudentModel.findByIdAndUpdate(
-            req.params.studentId,
-            {$push :{
-                        "question_bank" : {
-                                "subject_id": req.params.subjectId,
-                                "questions.0": {
-                                    "question_id" : req.params.questionId,
-                                    "answer" : req.params.studentId
-                                }
-                        }
-                } }
+        // const asd = await StudentModel.findOneAndUpdate(
+        //     req.params.studentId,
+        //     {$push :{
+        //                 "question_bank" : {
+        //                         "subject_id": req.params.subjectId,
+        //                         "questions": {
+        //                             "question_id" : req.params.questionId,
+        //                             "answer" : req.params.selectedAns
+        //                         }
+        //                 }
+        //         } },
+        //     { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
+        // )
+        const subject = await QuesCategory.findById(req.params.subjectId);
+        const find = await StudentModel.find(
+            { _id: req.params.studentId,  question_bank: { $elemMatch: { subject_id: req.params.subjectId } } }
         )
-        console.log(asd)
+        if(find.length > 0){
+            const asd = await StudentModel.findOneAndUpdate(
+                req.params.studentId,
+                { $push: {
+                        "question_bank.$[outer].questions":
+                            {
+                                "question_id" : req.params.questionId,
+                                "answer" : req.params.selectedAns
+                            }
+                    }
+                },
+                { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
+            );
+            console.log("1",asd)
+        }else{
+            const asd = await StudentModel.findOneAndUpdate(
+                req.params.studentId,
+                {$push :{
+                            "question_bank" : {
+                                    "subject_id": req.params.subjectId,
+                                    "subject_name": subject.name,
+                                    "questions": {
+                                        "question_id" : req.params.questionId,
+                                        "answer" : req.params.selectedAns
+                                    }
+                            }
+                    } }
+            )
+            console.log("2",asd)
+        }
+
+
     } catch(err) {
         console.log(err)
     }

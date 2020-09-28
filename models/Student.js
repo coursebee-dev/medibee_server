@@ -36,6 +36,7 @@ const UserSchema = new Schema({
   question_bank:[{
     subject: {type: String},
     subject_id: {type: String},
+    subject_name: {type: String},
     questions: [{
       question_id : {type: String},
       answer : {type: Number},
