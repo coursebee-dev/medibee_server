@@ -325,7 +325,7 @@ router.get('/questionBank/question/:subjectId/:studentId',async (req,res,next) =
         const allQues = questions.questions;
         const answered = await StudentModel.findOne({_id: req.params.studentId}).select( { question_bank: {$elemMatch: {subject_id: req.params.subjectId }}} )
 
-        console.log("answeredddd",answered.question_bank)
+
         if (answered.question_bank.length > 0){
             const answeredQues = answered.question_bank[0].questions;
 
@@ -359,12 +359,13 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
         //     { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
         // )
         const subject = await QuesCategory.findById(req.params.subjectId);
+
         const find = await StudentModel.find(
             { _id: req.params.studentId,  question_bank: { $elemMatch: { subject_id: req.params.subjectId } } }
         )
         if(find.length > 0){
             const asd = await StudentModel.findOneAndUpdate(
-                req.params.studentId,
+                {_id: req.params.studentId},
                 { $push: {
                         "question_bank.$[outer].questions":
                             {
@@ -375,9 +376,10 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
                 },
                 { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
             );
+
         }else{
             const asd = await StudentModel.findOneAndUpdate(
-                req.params.studentId,
+                {_id: req.params.studentId},
                 {$push :{
                             "question_bank" : {
                                     "subject_id": req.params.subjectId,
@@ -389,6 +391,7 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
                             }
                     } }
             )
+
         }
 
 
@@ -400,7 +403,7 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
 router.post('/liveclass/updateschedule/:classid/:id', async (req, res) => {
     try {
         const liveclass = await LiveClassModel.findOne({ _id: req.params.classid })
-        console.log(req.body)
+
         liveclass.classtimes[req.params.id] = req.body;
         liveclass.save();
         console.log(liveclass.classtimes[req.params.id])
