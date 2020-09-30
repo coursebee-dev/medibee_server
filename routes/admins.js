@@ -10,6 +10,7 @@ const MentorModel = require("../models/Mentor");
 const LiveClassModel = require("../models/LiveClass");
 const SubjectModel = require("../models/Subject");
 const CategoryModel = require("../models/Category");
+const Course = require("../models/Course");
 const QuesCategory = require("../models/QuesCategory");
 const QuesBank = require('../models/QuesBank');
 const { application } = require('express');
@@ -273,6 +274,20 @@ router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: 
 });
 
 // question bank
+router.get('/questionBank/course',async (req,res,next) => {
+
+});
+
+router.post('/questionBank/course/add',async (req,res,next) => {
+    try{
+        const course =  await new Course(req.body)
+        course.save();
+        res.json({message: 'success'} )
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 router.get('/questionBank/category',/*passport.authenticate('jwtAdmin',{session: false}),*/ async (req, res, next) => {
     try {
         const category = await QuesCategory.find().populate('questions')
@@ -286,6 +301,12 @@ router.post('/questionBank/category/add', async(req,res,next) => {
     try {
         const quesCategory = await new QuesCategory(req.body);
         quesCategory.save();
+
+        await Course.findByIdAndUpdate(
+            quesCategory.course._id,
+            {$push : {subjects : quesCategory._id}},
+            { new: false, useFindAndModify: true }
+        )
         res.json({message: 'success'});
     } catch(err) {
         res.send(err)
@@ -294,7 +315,6 @@ router.post('/questionBank/category/add', async(req,res,next) => {
 
 router.post('/questionBank/question/add',async (req,res,next) => {
     try {
-        console.log(req.body.questionCategory);
         const question = await new QuesBank(req.body);
         question.save();
 
@@ -345,19 +365,6 @@ router.get('/questionBank/question/:subjectId/:studentId',async (req,res,next) =
 
 router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(req,res,next) => {
     try{
-        // const asd = await StudentModel.findOneAndUpdate(
-        //     req.params.studentId,
-        //     {$push :{
-        //                 "question_bank" : {
-        //                         "subject_id": req.params.subjectId,
-        //                         "questions": {
-        //                             "question_id" : req.params.questionId,
-        //                             "answer" : req.params.selectedAns
-        //                         }
-        //                 }
-        //         } },
-        //     { "arrayFilters": [{"outer.subject_id": req.params.subjectId }] }
-        // )
         const subject = await QuesCategory.findById(req.params.subjectId);
 
         const find = await StudentModel.find(
@@ -399,6 +406,7 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
         console.log(err)
     }
 })
+// question bank end
 
 router.post('/liveclass/updateschedule/:classid/:id', async (req, res) => {
     try {
