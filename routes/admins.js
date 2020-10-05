@@ -275,7 +275,12 @@ router.post('/category/delete/:id',/*passport.authenticate('jwtAdmin',{session: 
 
 // question bank
 router.get('/questionBank/course',async (req,res,next) => {
-
+    try {
+        const courses = await Course.find().populate('subjects')
+        res.json(courses);
+    } catch(err) {
+        res.send(err)
+    }
 });
 
 router.post('/questionBank/course/add',async (req,res,next) => {
