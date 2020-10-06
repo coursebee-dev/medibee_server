@@ -322,13 +322,14 @@ router.post('/questionBank/question/add',async (req,res,next) => {
     try {
         const question = await new QuesBank(req.body);
         question.save();
+        console.log("question",question)
 
         const categoryUpdate = await QuesCategory.findByIdAndUpdate(
             question.questionCategory._id,
             {$push : {questions : question._id} },
             { new: false, useFindAndModify: true }
         )
-        console.log(categoryUpdate)
+        console.log("categoryUpdate",categoryUpdate)
         res.json({message: 'success'});
     } catch(err) {
         res.send(err)
