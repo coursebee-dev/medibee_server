@@ -302,6 +302,15 @@ router.get('/questionBank/category',/*passport.authenticate('jwtAdmin',{session:
     }
 });
 
+router.get(`/questionBank/category/:courseId`,async(req,res,next) =>{
+    try {
+        const category = await QuesCategory.find({course:req.params.courseId}).populate('questions')
+        res.json(category);
+    } catch(err) {
+        res.send(err)
+    }
+});
+
 router.post('/questionBank/category/add', async(req,res,next) => {
     try {
         const quesCategory = await new QuesCategory(req.body);
