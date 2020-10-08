@@ -406,6 +406,7 @@ router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(
                             "question_bank" : {
                                     "subject_id": req.params.subjectId,
                                     "subject_name": subject.name,
+                                    "course_id": subject.course._id,
                                     "questions": {
                                         "question_id" : req.params.questionId,
                                         "answer" : req.params.selectedAns

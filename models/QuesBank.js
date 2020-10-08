@@ -19,7 +19,8 @@ const QuesBank = new Schema({
         type: String,
         required: true
     },
-    questionCategory: { type: Schema.Types.ObjectId, ref: 'QuesCatg'}
+    questionCategory: { type: Schema.Types.ObjectId, ref: 'QuesCatg'},
+    course: {type: Schema.Types.ObjectId, ref: 'Course' }
 })
 
 module.exports = mongoose.model('QuesBank',QuesBank)
