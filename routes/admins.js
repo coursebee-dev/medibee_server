@@ -347,7 +347,7 @@ router.post('/questionBank/question/add',async (req,res,next) => {
 
 router.get('/questionBank/question',async (req,res,next) => {
     try {
-        const questions = await QuesBank.findOne().populate('questionCategory')
+        const questions = await QuesBank.find().populate('questionCategory')
         res.json(questions);
     } catch(err) {
         res.send(err)
