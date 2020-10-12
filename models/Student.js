@@ -1,37 +1,38 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcryptjs');
-const Schema = mongoose.Schema;// Create Schema
+const bcrypt = require("bcryptjs");
+const Schema = mongoose.Schema; // Create Schema
 
 const UserSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    unique : true
+    unique: true,
   },
-  emailVerify:{
+  emailVerify: {
     type: Boolean,
-    default: false
+    default: false,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   institution: {
     type: String,
-    required: true
+    required: true,
   },
   subject: {
     type: String,
-    required: true
+    required: true,
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
+<<<<<<< HEAD
   meetings:[],
   question_bank:[{
     subject: {type: String},
@@ -44,10 +45,13 @@ const UserSchema = new Schema({
     }]
   }]
 
+=======
+  roles: [],
+  meetings: [],
+>>>>>>> master
 });
 
-
-UserSchema.pre('save', async function(next){
+UserSchema.pre("save", async function (next) {
   const user = this;
   //Hash the password with a salt round of 10, the higher the rounds the more secure, but the slower
   //your application becomes.
@@ -56,10 +60,10 @@ UserSchema.pre('save', async function(next){
   next();
 });
 
-UserSchema.methods.isValidPassword = async function(password){
+UserSchema.methods.isValidPassword = async function (password) {
   const user = this;
   const compare = await bcrypt.compare(password, user.password);
   return compare;
-}
+};
 
 module.exports = mongoose.model("Student", UserSchema);
