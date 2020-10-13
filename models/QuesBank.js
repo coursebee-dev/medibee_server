@@ -20,7 +20,7 @@ const QuesBank = new Schema({
         required: true
     },
     questionCategory: { type: Schema.Types.ObjectId, ref: 'QuesCatg'},
-    course: {type: Schema.Types.ObjectId, ref: 'Course' }
+    course: {type: Schema.Types.ObjectId, ref: 'QuesCourse' }
 })
 
 module.exports = mongoose.model('QuesBank',QuesBank)

@@ -13,7 +13,7 @@ const QuesCatg = new Schema({
             ref: "QuesBank"
         }
     ],
-    course: { type: Schema.Types.ObjectId, ref: 'Course'},
+    course: { type: Schema.Types.ObjectId, ref: 'QuesCourse'},
 });
 
 module.exports = mongoose.model("QuesCatg", QuesCatg);
