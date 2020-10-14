@@ -601,6 +601,15 @@ router.post('/questionBank/question/add',async (req,res,next) => {
     }
 });
 
+router.get('/questionBank/question/edit/:questionId',async (req,res,next) => {
+    try {
+        const questions = await QuesBank.findOne({_id: req.params.questionId}).populate('questionCategory')
+        res.json(questions);
+    } catch(err) {
+        res.send(err)
+    }
+});
+
 router.get('/questionBank/question',async (req,res,next) => {
     try {
         const questions = await QuesBank.find().populate('questionCategory')
