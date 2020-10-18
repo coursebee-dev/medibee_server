@@ -643,6 +643,15 @@ router.get('/questionBank/question/:subjectId/:studentId',async (req,res,next) =
     }
 });
 
+router.get('/questionBank/question/:subjectId',async (req,res,next) => {
+    try {
+        const questions = await QuesCategory.findById(req.params.subjectId).populate('questions')
+        res.json(questions.questions);
+    } catch(err) {
+        res.send(err)
+    }
+});
+
 router.get('/questionBank/:subjectId/:questionId/:selectedAns/:studentId',async(req,res,next) => {
     try{
         const subject = await QuesCategory.findById(req.params.subjectId);
