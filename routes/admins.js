@@ -610,6 +610,19 @@ router.get('/questionBank/question/edit/:questionId',async (req,res,next) => {
     }
 });
 
+router.post('/questionBank/question/update/:questionId',async (req,res,next) => {
+    try {
+        const question = await QuesBank.findOneAndUpdate(
+            { _id: req.params.questionId },
+            { $set: req.body }
+        );
+        question.save();
+        res.send({ message: "Successfully updated" });
+    } catch(err) {
+        res.send(err)
+    }
+});
+
 router.get('/questionBank/question',async (req,res,next) => {
     try {
         const questions = await QuesBank.find().populate('questionCategory')
