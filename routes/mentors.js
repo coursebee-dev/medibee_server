@@ -2,10 +2,12 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const { Image } = require('canvas');
 const validateRegisterInput = require("../validation/mentorRegister");
 const validateLoginInput = require("../validation/login");
 const MentorModel = require("../models/Mentor");
 const LiveClassModel = require("../models/LiveClass");
+const axios = require('axios')
 
 router.post("/register", async (req, res, next) => {
   const { errors, isValid } = validateRegisterInput(req.body);
@@ -134,16 +136,6 @@ router.get("/mentorinfo/:id", async (req, res) => {
 router.patch("/edit/:id", async (req, res) => {
   try {
     const mentor = await MentorModel.findOneAndUpdate({});
-  } catch (error) {
-    res.json(error);
-  }
-});
-
-router.post("/uploadimg/:mentorid", async (req, res) => {
-  try {
-    const mentor = await MentorModel.findOne({ _id: req.params.mentorid });
-    console.log(req.body);
-    res.json(req.body);
   } catch (error) {
     res.json(error);
   }
