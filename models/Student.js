@@ -33,7 +33,18 @@ const UserSchema = new Schema({
     default: Date.now,
   },
   roles: [],
-  meetings: [],
+  meetings:[],
+  question_bank:[{
+    subject: {type: String},
+    subject_id: {type: String},
+    subject_name: {type: String},
+    course_id: {type: String},
+    questions: [{
+      question_id : {type: String},
+      answer : {type: Number},
+    }]
+  }]
+
 });
 
 UserSchema.pre("save", async function (next) {

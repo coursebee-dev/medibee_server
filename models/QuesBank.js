@@ -6,19 +6,7 @@ const QuesBank = new Schema({
         type: String,
         required: true
     },
-    questionType: {
-        type: String,
-        required: true
-    },
-    questionPic: {
-        type: String
-    },
-    answerSelectionType: {
-        type: String,
-        required: true
-    },
     answers: [],
-    correctAnswer: [],
     messageForCorrectAnswer: {
         type: String,
         default: "Correct answer. Good job."
@@ -32,7 +20,7 @@ const QuesBank = new Schema({
         required: true
     },
     questionCategory: { type: Schema.Types.ObjectId, ref: 'QuesCatg'},
-    catg: { type: Schema.Types.ObjectId, ref: 'QuesCatg' }
+    course: {type: Schema.Types.ObjectId, ref: 'QuesCourse' }
 })
 
 module.exports = mongoose.model('QuesBank',QuesBank)

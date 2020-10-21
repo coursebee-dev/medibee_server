@@ -2,18 +2,17 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;// Create Schema
 
-const QuesCatg = new Schema({
+const Course = new Schema({
     name: {
         type: String,
         required: true
     },
-    questions : [
+    subjects : [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "QuesBank"
+            ref: "QuesCatg"
         }
-    ],
-    course: { type: Schema.Types.ObjectId, ref: 'QuesCourse'},
+    ]
 });
 
-module.exports = mongoose.model("QuesCatg", QuesCatg);
+module.exports = mongoose.model("QuesCourse", Course);

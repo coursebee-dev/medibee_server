@@ -83,16 +83,16 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.get(
-  "/profile",
-  passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
-    //We'll just send back the user details and the token
-    res.json({
-      message: "You made it to the secure route",
-      user: req.user,
-      token: req.query.secret_token,
-    });
-  }
+    "/profile",
+    passport.authenticate("jwt", { session: false }),
+    (req, res, next) => {
+      //We'll just send back the user details and the token
+      res.json({
+        message: "You made it to the secure route",
+        user: req.user,
+        token: req.query.secret_token,
+      });
+    }
 );
 
 router.get("/approvedliveclass", async (req, res, next) => {
@@ -148,143 +148,121 @@ router.post("/mentor/filter", async (req, res, next) => {
 });
 
 router.post(
-  "/registerliveclass/:studentid/:classid",
-  //passport.authenticate("jwt", { session: false }),
-  async (req, res, next) => {
-    try {
-      let { discountprice } = req.body;
-      const targetLiveClass = await LiveClassModel.findOne({
-        _id: req.params.classid,
-      });
-
-      const targetStudent = await StudentModel.findOne({
-        _id: req.params.studentid,
-      });
-
-      const participants = {
-        studentId: req.params.studentid,
-        joinURL: targetLiveClass.joinURL,
-      };
-
-      if (
-        await LiveClassModel.findOne({
+    "/registerliveclass/:studentid/:classid",
+    //passport.authenticate("jwt", { session: false }),
+    async (req, res, next) => {
+      try {
+        let { discountprice } = req.body;
+        const targetLiveClass = await LiveClassModel.findOne({
           _id: req.params.classid,
-          "participants.studentId": req.params.studentid,
-        })
-      ) {
-        res.json({ message: "Already registered", success: true });
-      } else if (targetLiveClass.class_type === "Paid") {
-        let sslcommerz = new SSLCommerz(sslsettings);
-        let post_body = {};
+        });
 
-        post_body["total_amount"] = discountprice;
-        post_body["currency"] = "BDT";
-        post_body["tran_id"] = `${
-          req.params.studentid + req.params.classid + Date.now()
-        }`;
-        post_body["success_url"] = "https://www.medibee.com.bd/success";
-        post_body["fail_url"] = "https://www.medibee.com.bd/failed";
-        post_body["cancel_url"] = "https://www.medibee.com.bd/cancel";
-        post_body["emi_option"] = 0;
-        post_body["cus_add1"] = "n/a";
-        post_body["cus_name"] = `${targetStudent.name}`;
-        post_body["cus_email"] = `${targetStudent.email}`;
-        post_body["cus_phone"] = `${req.body.phone}`;
-        post_body["cus_city"] = `${req.body.city}`;
-        post_body["cus_country"] = `${req.body.country}`;
-        post_body["shipping_method"] = "NO";
-        post_body["num_of_item"] = 1;
-        post_body["product_name"] = `${targetLiveClass.topic}`;
-        post_body["product_category"] = "Live Class Registration";
-        post_body["product_profile"] = "non-physical-goods";
-        post_body["value_a"] = req.params.studentid;
-        post_body["value_b"] = req.params.classid;
-        const transaction = await sslcommerz.init_transaction(post_body);
-        if (transaction.GatewayPageURL && transaction.GatewayPageURL !== "") {
-          res.json({
-            status: "success",
-            data: transaction.GatewayPageURL,
-            logo: transaction.storeLogo,
-          });
+        const targetStudent = await StudentModel.findOne({
+          _id: req.params.studentid,
+        });
+
+        const participants = {
+          studentId: req.params.studentid,
+          joinURL: targetLiveClass.joinURL,
+        };
+
+        if (
+            await LiveClassModel.findOne({
+              _id: req.params.classid,
+              "participants.studentId": req.params.studentid,
+            })
+        ) {
+          res.json({ message: "Already registered", success: true });
+        } else if (targetLiveClass.class_type === "Paid") {
+          let sslcommerz = new SSLCommerz(sslsettings);
+          let post_body = {};
+
+          post_body["total_amount"] = discountprice;
+          post_body["currency"] = "BDT";
+          post_body["tran_id"] = `${
+              req.params.studentid + req.params.classid + Date.now()
+          }`;
+          post_body["success_url"] = "https://www.medibee.com.bd/success";
+          post_body["fail_url"] = "https://www.medibee.com.bd/failed";
+          post_body["cancel_url"] = "https://www.medibee.com.bd/cancel";
+          post_body["emi_option"] = 0;
+          post_body["cus_add1"] = "n/a";
+          post_body["cus_name"] = `${targetStudent.name}`;
+          post_body["cus_email"] = `${targetStudent.email}`;
+          post_body["cus_phone"] = `${req.body.phone}`;
+          post_body["cus_city"] = `${req.body.city}`;
+          post_body["cus_country"] = `${req.body.country}`;
+          post_body["shipping_method"] = "NO";
+          post_body["num_of_item"] = 1;
+          post_body["product_name"] = `${targetLiveClass.topic}`;
+          post_body["product_category"] = "Live Class Registration";
+          post_body["product_profile"] = "non-physical-goods";
+          post_body["value_a"] = req.params.studentid;
+          post_body["value_b"] = req.params.classid;
+          const transaction = await sslcommerz.init_transaction(post_body);
+          if (transaction.GatewayPageURL && transaction.GatewayPageURL !== "") {
+            res.json({
+              status: "success",
+              data: transaction.GatewayPageURL,
+              logo: transaction.storeLogo,
+            });
+          } else {
+            res.json({
+              status: "fail",
+              data: null,
+              logo: transaction.storeLogo,
+              message: "JSON Data parsing error!",
+            });
+          }
         } else {
-          res.json({
-            status: "fail",
-            data: null,
-            logo: transaction.storeLogo,
-            message: "JSON Data parsing error!",
-          });
-        }
-      } else {
-        try {
-          participants.joinURL = targetLiveClass.joinURL;
+          try {
+            participants.joinURL = targetLiveClass.joinURL;
 
-          await LiveClassModel.updateOne(
-            { _id: req.params.classid },
-            { $push: { participants: participants } }
-          );
-          res.json({ message: "Successfully registered", success: true });
-        } catch (error) {
-          res.json(error.response.data.message);
+            await LiveClassModel.updateOne(
+                { _id: req.params.classid },
+                { $push: { participants: participants } }
+            );
+            res.json({ message: "Successfully registered", success: true });
+          } catch (error) {
+            res.json(error.response.data.message);
+          }
         }
+      } catch (error) {
+        res.json(error.message);
       }
-    } catch (error) {
-      res.json(error.message);
     }
-  }
 );
 
 router.post(
-  "/checkcoupon/:userid",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    //hellocoupon2020
-    console.log(req.body.coupon);
-    const user = await StudentModel.findOne({ _id: req.params.userid });
-    const found = await CouponModel.findOne({ code: req.body.coupon });
-    if (found) {
-      let coupontype = found.distribution;
-      let authorizedRoles = found.roles;
-      let selectedRoles = user.roles;
-      let match;
-      switch (coupontype) {
-        case "role":
-          match = authorizedRoles.some((role) => selectedRoles.includes(role));
-          if (match) {
-            res.json({
-              success: true,
-              message: "Coupon valid.",
-              coupon: found,
-            });
-          } else {
-            res.json({
-              success: false,
-              message: "You are not eligible for this coupon.",
-            });
-          }
-          break;
-        case "certain":
-          if (found.students.includes(req.params.userid)) {
-            res.json({
-              success: true,
-              message: "Coupon valid.",
-              coupon: found,
-            });
-          } else {
-            res.json({
-              success: false,
-              message: "You are not eligible for this coupon.",
-            });
-          }
-          break;
-        case "both":
-          match = authorizedRoles.some((role) => selectedRoles.includes(role));
-          if (match) {
-            res.json({
-              success: true,
-              message: "Coupon valid.",
-              coupon: found,
-            });
-          } else {
+    "/checkcoupon/:userid",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      //hellocoupon2020
+      console.log(req.body.coupon);
+      const user = await StudentModel.findOne({ _id: req.params.userid });
+      const found = await CouponModel.findOne({ code: req.body.coupon });
+      if (found) {
+        let coupontype = found.distribution;
+        let authorizedRoles = found.roles;
+        let selectedRoles = user.roles;
+        let match;
+        switch (coupontype) {
+          case "role":
+            match = authorizedRoles.some((role) => selectedRoles.includes(role));
+            if (match) {
+              res.json({
+                success: true,
+                message: "Coupon valid.",
+                coupon: found,
+              });
+            } else {
+              res.json({
+                success: false,
+                message: "You are not eligible for this coupon.",
+              });
+            }
+            break;
+          case "certain":
             if (found.students.includes(req.params.userid)) {
               res.json({
                 success: true,
@@ -297,34 +275,56 @@ router.post(
                 message: "You are not eligible for this coupon.",
               });
             }
-          }
-          break;
-        default:
-          res.json({ success: true, message: "Coupon valid.", coupon: found });
-          break;
+            break;
+          case "both":
+            match = authorizedRoles.some((role) => selectedRoles.includes(role));
+            if (match) {
+              res.json({
+                success: true,
+                message: "Coupon valid.",
+                coupon: found,
+              });
+            } else {
+              if (found.students.includes(req.params.userid)) {
+                res.json({
+                  success: true,
+                  message: "Coupon valid.",
+                  coupon: found,
+                });
+              } else {
+                res.json({
+                  success: false,
+                  message: "You are not eligible for this coupon.",
+                });
+              }
+            }
+            break;
+          default:
+            res.json({ success: true, message: "Coupon valid.", coupon: found });
+            break;
+        }
+      } else {
+        res.json({
+          success: false,
+          message: "Invalid or expired coupon.",
+        });
       }
-    } else {
-      res.json({
-        success: false,
-        message: "Invalid or expired coupon.",
-      });
     }
-  }
 );
 
 router.get(
-  "/myliveclass/:id",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const myliveclasses = await LiveClassModel.find({
-        "participants.studentId": req.params.id,
-      });
-      res.json(myliveclasses);
-    } catch (err) {
-      next(err);
+    "/myliveclass/:id",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+      try {
+        const myliveclasses = await LiveClassModel.find({
+          "participants.studentId": req.params.id,
+        });
+        res.json(myliveclasses);
+      } catch (err) {
+        next(err);
+      }
     }
-  }
 );
 
 router.get("/liveclassdetails/:id", async (req, res) => {
@@ -337,42 +337,42 @@ router.get("/liveclassdetails/:id", async (req, res) => {
 });
 
 router.get(
-  "/joinliveclass/:studentid/:classid",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res, next) => {
-    try {
-      const found = await LiveClassModel.findOne({
-        _id: req.params.classid,
-        "participants.studentId": req.params.studentid,
-      });
-      let targetparticipant;
-      if (!found) res.json({ message: "Not Authorized", success: false });
-      else if (new Date(found.start_date) > new Date())
-        res.json({
-          message: "Please Wait Until Scheduled Time",
-          success: false,
+    "/joinliveclass/:studentid/:classid",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res, next) => {
+      try {
+        const found = await LiveClassModel.findOne({
+          _id: req.params.classid,
+          "participants.studentId": req.params.studentid,
         });
-      else {
-        targetparticipant = found.participants.find((item) => {
-          return item.studentId === req.params.studentid;
-        });
-        res.json({
-          message: "Authorization Complete",
-          success: true,
-          joinurl: targetparticipant.joinURL,
-        });
+        let targetparticipant;
+        if (!found) res.json({ message: "Not Authorized", success: false });
+        else if (new Date(found.start_date) > new Date())
+          res.json({
+            message: "Please Wait Until Scheduled Time",
+            success: false,
+          });
+        else {
+          targetparticipant = found.participants.find((item) => {
+            return item.studentId === req.params.studentid;
+          });
+          res.json({
+            message: "Authorization Complete",
+            success: true,
+            joinurl: targetparticipant.joinURL,
+          });
+        }
+      } catch (err) {
+        next(err);
       }
-    } catch (err) {
-      next(err);
     }
-  }
 );
 
 router.post("/ipn_listener", async (req, res) => {
   try {
     let sslcommerz = new SSLCommerz(sslsettings);
     const validation = await sslcommerz.validate_transaction_order(
-      req.body.val_id
+        req.body.val_id
     );
     if (validation.status === "VALID") {
       const targetLiveClass = await LiveClassModel.findOne({
@@ -384,8 +384,8 @@ router.post("/ipn_listener", async (req, res) => {
         transaction: validation.tran_id,
       };
       await LiveClassModel.updateOne(
-        { _id: validation.value_b },
-        { $push: { participants: participants } }
+          { _id: validation.value_b },
+          { $push: { participants: participants } }
       );
 
       res.json({ message: "Successfully registered", success: true });
@@ -395,5 +395,17 @@ router.post("/ipn_listener", async (req, res) => {
     next(err);
   }
 });
+
+//question Bank
+router.get('/questionBank/:studentId',async(req,res) => {
+  try{
+    const student = await StudentModel.findById(req.params.studentId)
+    res.json(student.question_bank)
+  }
+  catch(error) {
+    console.log(error)
+  }
+})
+//question Bank end
 
 module.exports = router;
