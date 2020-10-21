@@ -623,6 +623,18 @@ router.post('/questionBank/question/update/:questionId',async (req,res,next) => 
     }
 });
 
+router.post(`/questionBank/question/delete/:questionId`, async(req,res,next) => {
+    try {
+        const {data} = await QuesBank.findOne(req.params.questionId)
+        await QuesBank.findOneAndDelete({ _id: req.params.questionId });
+        await QuesCategory.updateOne( {_id: data.questionCategory}, { $pullAll: {questions: [req.params.questionId] } } )
+        res.json({ message: "successfully deleted" });
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
+})
+
 router.get('/questionBank/question',async (req,res,next) => {
     try {
         const questions = await QuesBank.find().populate('questionCategory')
